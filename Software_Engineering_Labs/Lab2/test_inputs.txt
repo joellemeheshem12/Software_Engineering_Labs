@@ -1,0 +1,16 @@
+# Test inputs for Lab 2
+# Format: username password
+
+# 1. Normal Success
+alice@example.com Pass1234!
+
+# 2. Unknown Username
+unknown@example.com AnyPassword1!
+
+# 3. Invalid Password (Exists, but wrong password)
+bob@test.org WrongPassword1!
+
+# 4. Infinite Retries
+carol@uni.ac.il Wrong1!
+carol@uni.ac.il Wrong2!
+carol@uni.ac.il Secure#7x

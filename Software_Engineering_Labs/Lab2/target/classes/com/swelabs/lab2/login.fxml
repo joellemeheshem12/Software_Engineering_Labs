@@ -50,7 +50,8 @@
                    maxWidth="320"/>
 
     <!-- Login button -->
-    <Button text="Login"
+    <Button fx:id="loginButton"
+            text="Login"
             onAction="#handleLogin"
             defaultButton="true"
             style="-fx-background-color: #89b4fa; -fx-text-fill: #1e1e2e;

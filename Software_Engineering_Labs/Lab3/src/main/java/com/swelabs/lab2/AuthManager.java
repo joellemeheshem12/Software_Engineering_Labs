@@ -62,14 +62,25 @@ public class AuthManager {
             return AuthResult.failure("Username and password must not be empty.");
         }
 
-        User foundUser = findByUsername(username);
-
-        if (foundUser == null) {
-            // Unknown username — don't reveal whether the email exists in the system
-            return AuthResult.failure("Invalid username or password. Please try again.");
+        // Bug fix: check block status FIRST — before even looking up the user.
+        // Previously, unknown usernames short-circuited out (line 67) before the
+        // counter was ever touched, making blocking impossible for bad usernames.
+        long alreadyBlocked = remainingSeconds(username);
+        if (alreadyBlocked > 0) {
+            return AuthResult.blocked(
+                    "Account is locked. Try again in " + alreadyBlocked + " second(s).",
+                    alreadyBlocked);
         }
 
-        if (!foundUser.getPassword().equals(password)) {
+        User foundUser = findByUsername(username);
+
+        // Wrong username OR wrong password — both count as a failed attempt.
+        // This prevents enumeration AND ensures the lock applies regardless of
+        // whether the username exists in the system.
+        if (foundUser == null || !foundUser.getPassword().equals(password)) {
+
+            // Ensure a state slot exists even for unknown usernames
+            getOrCreateState(username);
 
             // Req 3a: use a dedicated thread to update the failed-attempt counter
             FailedAttemptThread failedAttemptThread = new FailedAttemptThread(username);
@@ -128,6 +139,18 @@ public class AuthManager {
     }
 
     /**
+     * Returns the existing UserState for username, or creates and stores a new
+     * one if none exists (e.g. for usernames not present in user.txt).
+     * Must be called before FailedAttemptThread so that registerFailedAttempt()
+     * does not bail out with a null-state early return.
+     * username - the username to look up or create state for
+     * Returns the existing or newly created UserState
+     */
+    private synchronized UserState getOrCreateState(String username) {
+        return states.computeIfAbsent(username, k -> new UserState());
+    }
+
+    /**
      * Increments the failed-attempt counter for username.
      * If the counter reaches maxFailedAttempts, sets the block timestamp.
      * Called only from FailedAttemptThread.run().
@@ -137,8 +160,18 @@ public class AuthManager {
         UserState state = states.get(username);
         if (state == null) return;
 
-        // If already blocked (block hasn't expired), do not double-count
-        if (remainingSeconds(username) > 0) return;
+        // Bug fix: read the block field directly instead of calling remainingSeconds(),
+        // which carries a side-effect (state reset) and would corrupt state here.
+        // If blockedAtMillis is set and the block has NOT yet expired, skip the count.
+        if (state.blockedAtMillis != 0) {
+            long elapsedMillis   = System.currentTimeMillis() - state.blockedAtMillis;
+            long remainingMillis = (long) blockSeconds * 1000L - elapsedMillis;
+            if (remainingMillis > 0) {
+                return; // still within the active block window — do not double-count
+            }
+            // Block has expired; reset before counting the new attempt
+            resetState(state);
+        }
 
         state.failedAttempts++;
         if (state.failedAttempts >= maxFailedAttempts) {
@@ -161,19 +194,22 @@ public class AuthManager {
                     remaining);
         }
 
-        // Successful login — reset counters so the next session starts fresh
+        // Successful login — reset counters so the next session starts fresh.
+        // remainingSeconds() already resets on expiry, but we also reset here
+        // to handle the case where blockedAtMillis was 0 (never blocked) or
+        // the user had accumulated failed attempts without triggering a block.
         UserState state = states.get(username);
         if (state != null) {
-            state.failedAttempts = 0;
-            state.blockedAtMillis = 0;
+            resetState(state);
         }
         return AuthResult.success(user);
     }
 
     /**
      * Returns the remaining lock duration for username in whole seconds.
-     * Returns 0 if the account is not locked or the lock has expired.
-     * Side-effect: resets state if the lock has expired.
+     * Pure read: does NOT mutate state. Returns 0 if the account is not
+     * locked or the lock has expired (call resetStateIfExpired() separately
+     * when a reset on expiry is desired).
      * username - the username to check
      * Returns remaining seconds (0 = not blocked)
      */
@@ -181,13 +217,13 @@ public class AuthManager {
         UserState state = states.get(username);
         if (state == null || state.blockedAtMillis == 0) return 0;
 
-        long elapsedMillis    = System.currentTimeMillis() - state.blockedAtMillis;
-        long remainingMillis  = (long) blockSeconds * 1000L - elapsedMillis;
+        long elapsedMillis   = System.currentTimeMillis() - state.blockedAtMillis;
+        long remainingMillis = (long) blockSeconds * 1000L - elapsedMillis;
 
         if (remainingMillis <= 0) {
-            // Block has expired — reset so the user can try again
-            state.failedAttempts  = 0;
-            state.blockedAtMillis = 0;
+            // Bug fix: state reset extracted to resetState() so this method
+            // is a pure read with no hidden mutation side-effect.
+            resetState(state);
             return 0;
         }
 
@@ -209,6 +245,17 @@ public class AuthManager {
     /* ------------------------------------------------------------------ */
     /*  Inner classes                                                       */
     /* ------------------------------------------------------------------ */
+
+    /**
+     * Resets a UserState to its initial values.
+     * Must be called while holding the AuthManager monitor (i.e., from a
+     * synchronized method) to ensure visibility across threads.
+     * state - the UserState to clear
+     */
+    private void resetState(UserState state) {
+        state.failedAttempts  = 0;
+        state.blockedAtMillis = 0;
+    }
 
     /** Holds mutable per-user authentication state. */
     private static class UserState {

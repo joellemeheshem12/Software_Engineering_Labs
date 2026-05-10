@@ -1,17 +1,7 @@
-<<<<<<< Updated upstream:Software_Engineering_Labs/Lab3/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
-C:\Users\Joelle\OneDrive\Documents\Software_eng_labs\Lab3\src\main\java\com\swelabs\lab2\AuthManager.java
-C:\Users\Joelle\OneDrive\Documents\Software_eng_labs\Lab3\src\main\java\com\swelabs\lab2\AuthResult.java
-C:\Users\Joelle\OneDrive\Documents\Software_eng_labs\Lab3\src\main\java\com\swelabs\lab2\LoginController.java
-C:\Users\Joelle\OneDrive\Documents\Software_eng_labs\Lab3\src\main\java\com\swelabs\lab2\Main.java
-C:\Users\Joelle\OneDrive\Documents\Software_eng_labs\Lab3\src\main\java\com\swelabs\lab2\User.java
-C:\Users\Joelle\OneDrive\Documents\Software_eng_labs\Lab3\src\main\java\com\swelabs\lab2\WelcomeController.java
-C:\Users\Joelle\OneDrive\Documents\Software_eng_labs\Lab3\src\main\java\module-info.java
-=======
-C:\Users\Joelle\OneDrive\Documents\Software_Engineering_Labs\Lab3\src\main\java\com\swelabs\lab2\AuthManager.java
-C:\Users\Joelle\OneDrive\Documents\Software_Engineering_Labs\Lab3\src\main\java\com\swelabs\lab2\AuthResult.java
-C:\Users\Joelle\OneDrive\Documents\Software_Engineering_Labs\Lab3\src\main\java\com\swelabs\lab2\LoginController.java
-C:\Users\Joelle\OneDrive\Documents\Software_Engineering_Labs\Lab3\src\main\java\com\swelabs\lab2\Main.java
-C:\Users\Joelle\OneDrive\Documents\Software_Engineering_Labs\Lab3\src\main\java\com\swelabs\lab2\User.java
-C:\Users\Joelle\OneDrive\Documents\Software_Engineering_Labs\Lab3\src\main\java\com\swelabs\lab2\WelcomeController.java
-C:\Users\Joelle\OneDrive\Documents\Software_Engineering_Labs\Lab3\src\main\java\module-info.java
->>>>>>> Stashed changes:Lab3/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
+C:\Users\Joelle\OneDrive\Documents\Software_Engineering_Labs\Software_Engineering_Labs\Lab3\src\main\java\com\swelabs\lab2\AuthManager.java
+C:\Users\Joelle\OneDrive\Documents\Software_Engineering_Labs\Software_Engineering_Labs\Lab3\src\main\java\com\swelabs\lab2\AuthResult.java
+C:\Users\Joelle\OneDrive\Documents\Software_Engineering_Labs\Software_Engineering_Labs\Lab3\src\main\java\com\swelabs\lab2\LoginController.java
+C:\Users\Joelle\OneDrive\Documents\Software_Engineering_Labs\Software_Engineering_Labs\Lab3\src\main\java\com\swelabs\lab2\Main.java
+C:\Users\Joelle\OneDrive\Documents\Software_Engineering_Labs\Software_Engineering_Labs\Lab3\src\main\java\com\swelabs\lab2\User.java
+C:\Users\Joelle\OneDrive\Documents\Software_Engineering_Labs\Software_Engineering_Labs\Lab3\src\main\java\com\swelabs\lab2\WelcomeController.java
+C:\Users\Joelle\OneDrive\Documents\Software_Engineering_Labs\Software_Engineering_Labs\Lab3\src\main\java\module-info.java

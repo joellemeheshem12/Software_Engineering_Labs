@@ -180,14 +180,24 @@ public class LoginController {
         loginButton.setDisable(true);
         showError(initialMessage);
 
+        // Bug fix: anchor the countdown to a wall-clock deadline instead of
+        // accumulating Thread.sleep(1000) calls. Each sleep may overshoot by a
+        // few ms; over 30+ seconds that drift can cause the UI to un-lock before
+        // (or after) the AuthManager's block actually expires.
         countdownThread = new Thread(() -> {
-            for (long remaining = totalSeconds; remaining > 0; remaining--) {
-                final long r = remaining;
+            long deadlineMs = System.currentTimeMillis() + totalSeconds * 1000L;
+            while (true) {
+                long remainingMs = deadlineMs - System.currentTimeMillis();
+                if (remainingMs <= 0) break;
+
+                final long remainingSec = (long) Math.ceil(remainingMs / 1000.0);
                 Platform.runLater(() ->
-                        showError("Account locked. Try again in " + r + " second(s).")
+                        showError("Account locked. Try again in " + remainingSec + " second(s).")
                 );
                 try {
-                    Thread.sleep(1000);
+                    // Sleep until the next whole-second boundary, not a fixed 1000ms
+                    long sleepMs = remainingMs % 1000;
+                    Thread.sleep(sleepMs == 0 ? 1000 : sleepMs);
                 } catch (InterruptedException e) {
                     // Countdown was cancelled (e.g., window closing)
                     return;

@@ -1,0 +1,24 @@
+=== Lab 2 Test Results ===
+Configuration: Basic Auth (No lockouts)
+
+# 1. Normal Success
+-> [INPUT]  Username: 'alice@example.com' | Password: 'Pass1234!'
+<- [RESULT] SUCCESS: Welcome screen opened for alice@example.com
+
+# 2. Unknown Username
+-> [INPUT]  Username: 'unknown@example.com' | Password: 'AnyPassword1!'
+<- [RESULT] FAILURE: Invalid username or password. Please try again.
+
+# 3. Invalid Password (Exists, but wrong password)
+-> [INPUT]  Username: 'bob@test.org' | Password: 'WrongPassword1!'
+<- [RESULT] FAILURE: Invalid username or password. Please try again.
+
+# 4. Infinite Retries
+-> [INPUT]  Username: 'carol@uni.ac.il' | Password: 'Wrong1!'
+<- [RESULT] FAILURE: Invalid username or password. Please try again.
+
+-> [INPUT]  Username: 'carol@uni.ac.il' | Password: 'Wrong2!'
+<- [RESULT] FAILURE: Invalid username or password. Please try again.
+
+-> [INPUT]  Username: 'carol@uni.ac.il' | Password: 'Secure#7x'
+<- [RESULT] SUCCESS: Welcome screen opened for carol@uni.ac.il
