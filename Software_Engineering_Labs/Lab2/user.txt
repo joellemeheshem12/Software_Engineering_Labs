@@ -1,0 +1,12 @@
+# user.txt — input file for Lab 2 GCM Login System
+# Format: username(email) password
+# Each line: one user. Lines with invalid credentials are skipped.
+# Password rules: 8-12 chars, must include a letter, digit, and special char (!@#$%^&*()_+)
+
+alice@example.com  Pass1234!
+bob@test.org       Hello@9world
+carol@uni.ac.il    Secure#7x
+invalid-email      Pass1234!
+alice@example.com  tooshort
+dave@school.edu    NoSpecial1
+eve@lab.com        Abc@1234ok

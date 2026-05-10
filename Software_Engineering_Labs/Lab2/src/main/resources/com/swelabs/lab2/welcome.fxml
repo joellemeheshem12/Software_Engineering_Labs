@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<!--
+    Welcome screen layout for Lab 2.
+    Controller : com.swelabs.lab2.WelcomeController
+    Shown after a successful login; displays a personalised welcome message.
+-->
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.swelabs.lab2.WelcomeController"
+      alignment="CENTER"
+      spacing="20"
+      style="-fx-background-color: #1e1e2e;">
+
+    <padding>
+        <Insets top="60" right="50" bottom="60" left="50"/>
+    </padding>
+
+    <!-- Large Unicode checkmark used as a success icon -->
+    <Label text="✓"
+           style="-fx-font-size: 52px; -fx-text-fill: #a6e3a1; -fx-font-family: 'Segoe UI';"/>
+
+    <!-- Static heading -->
+    <Label text="Login Successful"
+           style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #cdd6f4;
+                  -fx-font-family: 'Segoe UI';"/>
+
+    <!-- Dynamic welcome message — populated by WelcomeController.setUser() -->
+    <Label fx:id="welcomeLabel"
+           text=""
+           wrapText="true"
+           alignment="CENTER"
+           style="-fx-font-size: 14px; -fx-text-fill: #a6adc8; -fx-font-family: 'Segoe UI';
+                  -fx-text-alignment: center;"
+           maxWidth="340"/>
+
+</VBox>
